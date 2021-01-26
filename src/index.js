@@ -17,8 +17,9 @@ io.on('connection', (socket) => {
 
     socket.emit('message', 'Welcome!')
     socket.broadcast.emit('message','new user joined')
-    socket.on('sendMessage', (message) => {
+    socket.on('sendMessage', (message,callback) => {
         io.emit('message', message)
+        callback()
     })
     socket.on('sendLocation',(cords)=>{
         //io.emit('message',`Location:${cords.latitude},${cords.longitude}`)
