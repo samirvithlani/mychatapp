@@ -5,6 +5,7 @@ const app = express()
 const server = htpp.createServer(app)
 const socketio = require('socket.io')
 const { Socket } = require('dgram')
+ const {generateMessage} = require('./utils/message')
 const publicDirectoryPath = path.join(__dirname, '../public')
 
 app.use(express.static(publicDirectoryPath))
@@ -15,10 +16,10 @@ let count = 0
 io.on('connection', (socket) => {
     console.log('new wen socket connection')
 
-    socket.emit('message', 'Welcome!')
-    socket.broadcast.emit('message','new user joined')
+    socket.emit('message', generateMessage('Welcome!!'))
+    socket.broadcast.emit('message',generateMessage('new user joined'))
     socket.on('sendMessage', (message,callback) => {
-        io.emit('message', message)
+        io.emit('message', generateMessage(message))
         callback()
     })
     socket.on('sendLocation',(cords)=>{
@@ -27,7 +28,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect',()=>{
-        io.emit('message',"A user left")
+        io.emit('message',generateMessage("A user left"))
     })
 
     /* socket.emit('countUpdated',count)
