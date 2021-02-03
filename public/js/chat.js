@@ -6,7 +6,7 @@ const $messagFormButton = document.querySelector('button')
 const $messages = document.querySelector('#messages')
 const messagTemplate = document.querySelector('#message-template').innerHTML
 
-const {username,room}=Qs.parse(location.search,{ignoreQueryPrefix:true})
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 socket.on('message', (message) => {
 
@@ -51,5 +51,5 @@ document.querySelector('#send-location').addEventListener('click', () => {
     })
 })
 
-socket.emit('join',{username,room})
+socket.emit('join', { username, room })
 

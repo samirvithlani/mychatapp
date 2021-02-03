@@ -17,12 +17,16 @@ io.on('connection', (socket) => {
     console.log('new wen socket connection')
 
      
-    socket.on('join',({username,room})=>{
-
+    socket.on('join', ({ username, room }) => {
         socket.join(room)
-        socket.emit('message',generateMessage('Welcome !!'))
-        socket.broadcast.to(room).emit('message',generateMessage(`${username}has joined !`))
+        socket.emit('message', generateMessage('Welcome!'))
+        console.log(username)
+        socket.broadcast.emit('message', generateMessage(`${username} has joined!`))
+
+        // socket.emit, io.emit, socket.broadcast.emit
+        // io.to.emit, socket.broadcast.to.emit
     })
+    
     socket.on('sendMessage', (message,callback) => {
         io.emit('message', generateMessage(message))
         callback()
