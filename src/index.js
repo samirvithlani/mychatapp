@@ -7,6 +7,7 @@ const socketio = require('socket.io')
 const { Socket } = require('dgram')
  const {generateMessage} = require('./utils/message')
 const publicDirectoryPath = path.join(__dirname, '../public')
+const{addUser,removeUser,getUserInRoom,getUser}= require('./utils/user')
 
 app.use(express.static(publicDirectoryPath))
 
@@ -17,14 +18,21 @@ io.on('connection', (socket) => {
     console.log('new wen socket connection')
 
      
-    socket.on('join', ({ username, room }) => {
-        socket.join(room)
-        socket.emit('message', generateMessage('Welcome!'))
-        console.log(username)
-        socket.broadcast.emit('message', generateMessage(`${username} has joined!`))
+    socket.on('join', ({ options },callback) => {
+        const {error,user} = addUser({id:socket.id,...options})
 
-        // socket.emit, io.emit, socket.broadcast.emit
-        // io.to.emit, socket.broadcast.to.emit
+        if(error){
+
+            return callback(error)
+        }
+
+
+
+        socket.join(user.room)
+        socket.emit('message', generateMessage('Welcome!'))
+        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined!`))
+        callback()
+
     })
     
     socket.on('sendMessage', (message,callback) => {
@@ -37,7 +45,14 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect',()=>{
-        io.emit('message',generateMessage("A user left"))
+
+        const user = removeUser(socket.id)
+        if(user){
+
+            //io.to(user.room).emit('message',generateMessage("A user left"))
+            io.emit('message',generateMessage(`${user.username}has left`))
+        }
+        
     })
 
     /* socket.emit('countUpdated',count)
