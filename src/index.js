@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
     }) */
 })
 
-const PORT =3000
-server.listen(PORT, () => {
+const PORT = process.env.PORT
+server.listen(PORT || 5000, () => {
     console.log('server stared..')
 })
